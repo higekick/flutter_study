@@ -5,6 +5,8 @@
 // To keep your imports tidy, follow the ordering guidelines at
 // https://www.dartlang.org/guides/language/effective-dart/style#ordering
 import 'package:flutter/material.dart';
+import 'package:uandme/converter_route.dart';
+import 'package:uandme/unit.dart';
 
 final _rowHeight = 100.0;
 final _borderRadius = BorderRadius.circular(_rowHeight / 10);
@@ -22,11 +24,28 @@ class Category extends StatelessWidget {
   /// the UI, and the icon that represents it (e.g. a ruler).
   // TODO: You'll need the name, color, and iconLocation from main.dart
   const Category(
-      {@required this.name, @required this.icon, @required this.color});
+      {@required this.name,
+      @required this.icon,
+      @required this.color,
+      @required this.units});
 
   final String name;
   final IconData icon;
   final ColorSwatch color;
+  final List<Unit> units;
+
+  /// Navigates to the [ConverterRoute].
+  void _navigateToConverter(BuildContext context) {
+    // TODO: Using the Navigator, navigate to the [ConverterRoute]
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => ConverterRoute(
+                  units: units,
+                  color: color,
+                  title: name,
+                )));
+  }
 
   /// Builds a custom widget that shows [Category] information.
   ///
@@ -48,6 +67,7 @@ class Category extends StatelessWidget {
           splashColor: color,
           onTap: () {
             print("on Tap!");
+            _navigateToConverter(context);
           },
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,

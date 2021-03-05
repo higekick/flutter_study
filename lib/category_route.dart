@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
+import 'package:uandme/unit.dart';
 
 import 'category.dart';
 
@@ -60,6 +61,17 @@ class CategoryRoute extends StatelessWidget {
     Colors.red,
   ];
 
+  /// Returns a list of mock [Unit]s.
+  List<Unit> _retrieveUnitList(String categoryName) {
+    return List.generate(10, (int i) {
+      i += 1;
+      return Unit(
+        name: '$categoryName Unit $i',
+        conversion: i.toDouble(),
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     // TODO: Create a list of the eight Categories, using the names and colors
@@ -72,10 +84,12 @@ class CategoryRoute extends StatelessWidget {
       child: ListView.builder(
         itemCount: _categoryNames.length,
         itemBuilder: (BuildContext context, int index) {
+          final name = _categoryNames[index];
           return Category(
-            name: _categoryNames[index],
+            name: name,
             color: _baseColors[index],
             icon: Icons.cake,
+            units: _retrieveUnitList(name),
           );
         },
       ),
