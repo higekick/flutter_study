@@ -18,10 +18,17 @@ import 'category.dart';
 ///
 /// While it is named CategoryRoute, a more apt name would be CategoryScreen,
 /// because it is responsible for the UI at the route's destination.
-class CategoryRoute extends StatelessWidget {
-  static final _color = Colors.green[100];
+final _color = Colors.green[100];
 
+class CategoryRoute extends StatefulWidget {
   const CategoryRoute();
+
+  @override
+  State<StatefulWidget> createState() => _CategoryRouteState();
+}
+
+class _CategoryRouteState extends State<CategoryRoute> {
+  final _categories = <Category>[];
 
   static const _categoryNames = <String>[
     'Length',
@@ -73,6 +80,19 @@ class CategoryRoute extends StatelessWidget {
   }
 
   @override
+  void initState() {
+    super.initState();
+    for (var i = 0; i < _categoryNames.length; i++) {
+      _categories.add(Category(
+        name: _categoryNames[i],
+        color: _baseColors[i],
+        icon: Icons.cake,
+        units: _retrieveUnitList(_categoryNames[i]),
+      ));
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     // TODO: Create a list of the eight Categories, using the names and colors
     // from above. Use a placeholder icon, such as `Icons.cake` for each
@@ -82,15 +102,9 @@ class CategoryRoute extends StatelessWidget {
     final listView = Container(
       color: _color,
       child: ListView.builder(
-        itemCount: _categoryNames.length,
+        itemCount: _categories.length,
         itemBuilder: (BuildContext context, int index) {
-          final name = _categoryNames[index];
-          return Category(
-            name: name,
-            color: _baseColors[index],
-            icon: Icons.cake,
-            units: _retrieveUnitList(name),
-          );
+          return _categories[index];
         },
       ),
       padding: EdgeInsets.symmetric(horizontal: 10.0),
@@ -108,8 +122,9 @@ class CategoryRoute extends StatelessWidget {
     );
 
     return Scaffold(
-        appBar: appBar,
-        body: listView,
+      appBar: appBar,
+      body: listView,
     );
   }
+
 }

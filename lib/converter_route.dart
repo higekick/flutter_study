@@ -12,38 +12,56 @@ import 'package:uandme/unit.dart';
 ///
 /// While it is named ConverterRoute, a more apt name would be ConverterScreen,
 /// because it is responsible for the UI at the route's destination.
-class ConverterRoute extends StatelessWidget {
+class ConverterRoute extends StatefulWidget {
   /// Units for this [Category].
   final List<Unit> units;
   final ColorSwatch color;
   final String title;
 
   /// This [ConverterRoute] requires the color and units to not be null.
-  // TODO: Pass in the [Category]'s color
+// TODO: Pass in the [Category]'s color
   const ConverterRoute({
     @required this.units,
     @required this.color,
     @required this.title,
-  }) : assert(units != null);
+  })
+      : assert(units != null),
+        assert(color != null)
+  ;
+
+  @override
+  State<StatefulWidget> createState() {
+    return _ConverterRouteState();
+  }
+
+}
+
+class _ConverterRouteState extends State<ConverterRoute> {
 
   @override
   Widget build(BuildContext context) {
     // Here is just a placeholder for a list of mock units
-    final unitWidgets = units.map((Unit unit) {
+    final unitWidgets = widget.units.map((Unit unit) {
       // TODO: Set the color for this Container
       return Container(
-        color: color,
+        color: widget.color,
         margin: EdgeInsets.all(8.0),
         padding: EdgeInsets.all(16.0),
         child: Column(
           children: <Widget>[
             Text(
               unit.name,
-              style: Theme.of(context).textTheme.headline,
+              style: Theme
+                  .of(context)
+                  .textTheme
+                  .headline,
             ),
             Text(
               'Conversion: ${unit.conversion}',
-              style: Theme.of(context).textTheme.subhead,
+              style: Theme
+                  .of(context)
+                  .textTheme
+                  .subhead,
             ),
           ],
         ),
@@ -52,11 +70,11 @@ class ConverterRoute extends StatelessWidget {
 
     final appBar = AppBar(
       title: Text(
-        title,
+        widget.title,
         style: TextStyle(fontSize: 30.0, color: Colors.black),
       ),
       elevation: 0.0,
-      backgroundColor: color,
+      backgroundColor: widget.color,
       centerTitle: true,
     );
 
@@ -67,4 +85,5 @@ class ConverterRoute extends StatelessWidget {
       ),
     );
   }
+
 }
