@@ -49,8 +49,8 @@ class _ConverterRouteState extends State<ConverterRoute> {
   void initState() {
     super.initState();
     setState(() {
-      _selectedIn = widget.units.first;
-      _selectedOut = widget.units.first;
+      _selectedIn = widget.units[0];
+      _selectedOut = widget.units[1];
     });
     _createDropdownMenuItems();
   }
@@ -75,14 +75,12 @@ class _ConverterRouteState extends State<ConverterRoute> {
       _selectedOut = val;
       _updateConversion();
     }, _selectedOut);
-    final arrow = Container(
-      child: Transform.rotate(
-          angle: 90 * pi / 180,
-          child: Icon(
-            Icons.compare_arrows_outlined,
-            size: 50.0,
-          )),
-    );
+    final arrow = RotatedBox(
+        quarterTurns: 1,
+        child: Icon(
+          Icons.compare_arrows,
+          size: 40.0,
+        ));
 
     final bodies = Container(
       child: Column(
@@ -108,7 +106,7 @@ class _ConverterRouteState extends State<ConverterRoute> {
   }
 
   Widget makeControl(String label, GetCallback callback, Unit selected) {
-    final crls = Padding(
+    final ctrls = Padding(
       padding: EdgeInsets.all(16.0),
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         label == 'Input'
@@ -164,7 +162,7 @@ class _ConverterRouteState extends State<ConverterRoute> {
             )))
       ]),
     );
-    return crls;
+    return ctrls;
   }
 
   /// Clean up conversion; trim trailing zeros, e.g. 5.500 -> 5.5, 10.0 -> 10
