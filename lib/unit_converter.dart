@@ -50,6 +50,7 @@ class _UnitConverterState extends State<UnitConverter> {
   void initState() {
     super.initState();
     _createDropdownMenuItems();
+    setDefault();
   }
 
   void setDefault() {
