@@ -13,10 +13,9 @@ class Unit {
   ///
   /// An example would be 'Meter' and '1.0'.
   const Unit({
-    @required this.name,
-    @required this.conversion,
-  })  : assert(name != null),
-        assert(conversion != null);
+    required this.name,
+    required this.conversion,
+  });
 
   /// Creates a [Unit] from a JSON object.
   Unit.fromJson(Map jsonMap)

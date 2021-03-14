@@ -6,7 +6,12 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
+import 'package:uandme/api_client.dart';
 import 'package:uandme/unit.dart';
+
+import 'category.dart';
+
+const _padding = EdgeInsets.all(16.0);
 
 /// Converter screen where users can input amounts to convert.
 ///
@@ -14,67 +19,90 @@ import 'package:uandme/unit.dart';
 ///
 /// While it is named ConverterRoute, a more apt name would be ConverterScreen,
 /// because it is responsible for the UI at the route's destination.
-class ConverterRoute extends StatefulWidget {
+class UnitConverter extends StatefulWidget {
   /// Units for this [Category].
-  final List<Unit> units;
-  final ColorSwatch color;
-  final String title;
+  final Category category;
 
-  /// This [ConverterRoute] requires the color and units to not be null.
+  /// This [UnitConverter] requires the color and units to not be null.
 // TODO: Pass in the [Category]'s color
-  const ConverterRoute({
-    @required this.units,
-    @required this.color,
-    @required this.title,
-  })  : assert(units != null),
-        assert(color != null);
+  const UnitConverter({
+    required this.category
+  });
 
   @override
   State<StatefulWidget> createState() {
-    return _ConverterRouteState();
+    return _UnitConverterState();
   }
 }
 
-typedef GetCallback = void Function(Unit);
+typedef GetCallback = void Function(Unit?);
 
-class _ConverterRouteState extends State<ConverterRoute> {
-  Unit _selectedIn;
-  Unit _selectedOut;
-  double _inputValue;
+class _UnitConverterState extends State<UnitConverter> {
+  Unit? _selectedIn;
+  Unit? _selectedOut;
+  double? _inputValue;
   String _outputValue = '';
-  List<DropdownMenuItem> _unitMenuItems;
+  List<DropdownMenuItem<Unit>>? _unitMenuItems;
   bool _showValidationError = false;
+  bool _showApiError = false;
 
   @override
   void initState() {
     super.initState();
-    setState(() {
-      _selectedIn = widget.units[0];
-      _selectedOut = widget.units[1];
-    });
     _createDropdownMenuItems();
+  }
+
+  void setDefault() {
+    setState(() {
+      if (widget.category.units.length > 0) {
+        _selectedIn = widget.category.units[0];
+      }
+      if (widget.category.units.length > 1) {
+        _selectedOut = widget.category.units[1];
+      }
+      _showApiError = false;
+    });
+  }
+
+  @override
+  void didUpdateWidget(covariant UnitConverter oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.category != widget.category) {
+      _createDropdownMenuItems();
+      setDefault();
+    }
   }
 
   /// Creates fresh list of [DropdownMenuItem] widgets, given a list of [Unit]s.
   void _createDropdownMenuItems() {
+    var newItems = widget.category.units.map<DropdownMenuItem<Unit>>((Unit e) {
+      return DropdownMenuItem<Unit>(
+          value: e, child: Text(e.name, softWrap: true));
+    }).toList();
+
     setState(() {
-      _unitMenuItems = widget.units.map<DropdownMenuItem<Unit>>((Unit e) {
-        return DropdownMenuItem<Unit>(
-            value: e, child: Text(e.name, softWrap: true));
-      }).toList();
+      _unitMenuItems = newItems;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_showApiError) {
+      return Center(
+        child: Text("api access error."),
+      );
+    }
+
     final input = makeControl('Input', (val) {
       _selectedIn = val;
       _updateConversion();
     }, _selectedIn);
+
     final output = makeControl('Output', (val) {
       _selectedOut = val;
       _updateConversion();
     }, _selectedOut);
+
     final arrow = RotatedBox(
         quarterTurns: 1,
         child: Icon(
@@ -82,30 +110,32 @@ class _ConverterRouteState extends State<ConverterRoute> {
           size: 40.0,
         ));
 
-    final bodies = Container(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [input, arrow, output],
-      ),
+    final converter = ListView(
+      children: [input, arrow, output],
     );
 
-    final appBar = AppBar(
-      title: Text(
-        widget.title,
-        style: TextStyle(fontSize: 30.0, color: Colors.black),
+    // Based on the orientation of the parent widget, figure out how to best
+    // lay out our converter.
+    return Padding(
+      padding: _padding,
+      child: OrientationBuilder(
+        builder: (BuildContext context, Orientation orientation) {
+          if (orientation == Orientation.portrait) {
+            return converter;
+          } else {
+            return Center(
+              child: Container(
+                width: 450.0,
+                child: converter,
+              ),
+            );
+          }
+        },
       ),
-      elevation: 0.0,
-      backgroundColor: widget.color,
-      centerTitle: true,
-    );
-
-    return Scaffold(
-      appBar: appBar,
-      body: bodies,
     );
   }
 
-  Widget makeControl(String label, GetCallback callback, Unit selected) {
+  Widget makeControl(String label, GetCallback callback, Unit? selected) {
     final ctrls = Padding(
       padding: EdgeInsets.all(16.0),
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
@@ -142,7 +172,7 @@ class _ConverterRouteState extends State<ConverterRoute> {
               // This sets the color of the [DropdownButton] itself
               color: Colors.grey[50],
               border: Border.all(
-                color: Colors.grey[400],
+                color: Colors.grey[400]!,
                 width: 1.0,
               ),
             ),
@@ -152,7 +182,7 @@ class _ConverterRouteState extends State<ConverterRoute> {
               alignedDropdown: true,
               child: DropdownButton<Unit>(
                   value: selected,
-                  onChanged: (Unit newValue) {
+                  onChanged: (Unit? newValue) {
                     setState(() {
                       callback(newValue);
                     });
@@ -181,16 +211,38 @@ class _ConverterRouteState extends State<ConverterRoute> {
     return outputNum;
   }
 
-  void _updateConversion() {
+  Future<void> _updateConversion() async {
+    if (_selectedIn == null ||
+        _selectedOut == null ||
+        _inputValue == null
+    ) {
+      return;
+    }
+    var result = '';
+    if (widget.category.name == 'currency') {
+      var apiValue = await ApiClient().convert(_selectedIn!.name, _selectedOut!.name, _inputValue!);
+      if (apiValue == null) {
+        setState(() {
+          _showApiError = true;
+        });
+        return;
+      }
+      result = apiValue.toString();
+    }
+    else {
+      result = _format(
+          _inputValue! * (_selectedOut!.conversion / _selectedIn!.conversion));
+    }
+
     setState(() {
-      _outputValue = _format(
-          _inputValue * (_selectedOut.conversion / _selectedIn.conversion));
+      _showApiError = false;
+      _outputValue = result;
     });
   }
 
   void _updateInputValue(String input) {
     setState(() {
-      if (input == null || input.isEmpty) {
+      if (input.isEmpty) {
         _outputValue = '';
       } else {
         // Even though we are using the numerical keyboard, we still have to check
@@ -209,7 +261,7 @@ class _ConverterRouteState extends State<ConverterRoute> {
   }
 
   Unit _getUnit(String unitName) {
-    return widget.units.firstWhere(
+    return widget.category.units.firstWhere(
       (Unit unit) {
         return unit.name == unitName;
       },
