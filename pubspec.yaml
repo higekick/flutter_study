@@ -24,6 +24,7 @@ dependencies:
   flutter:
     sdk: flutter
   backdrop: ">=0.0.0 <0.7.0"
+  flutter_riverpod: ^0.13.1
 
 
   # The following adds the Cupertino Icons font to your application.

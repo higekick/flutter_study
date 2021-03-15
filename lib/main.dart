@@ -4,6 +4,7 @@
 
 // You can read about packages here: https://flutter.io/using-packages/
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uandme/category_route.dart';
 
 // You can use a relative import, i.e. `import 'category.dart';` or
@@ -12,7 +13,7 @@ import 'package:uandme/category_route.dart';
 
 /// The function that is called when main.dart is run.
 void main() {
-  runApp(UnitConverterApp());
+  runApp(ProviderScope(child: UnitConverterApp()));
 }
 
 /// This widget is the root of our application.
