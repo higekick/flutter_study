@@ -3,20 +3,18 @@
 // found in the LICENSE file.
 
 import 'dart:convert';
-import 'dart:io';
 
+import 'package:backdrop/app_bar.dart';
+import 'package:backdrop/button.dart';
+import 'package:backdrop/scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:uandme/api_client.dart';
-import 'package:uandme/backdrop.dart';
+import 'package:uandme/constants.dart';
 import 'package:uandme/unit.dart';
 import 'package:uandme/unit_converter.dart';
 
 import 'package:uandme/category.dart';
 import 'package:uandme/category_tile.dart';
-
-// TODO: Check if we need to import anything
-
-// TODO: Define any constants
 
 /// Category Route (screen).
 ///
@@ -25,7 +23,6 @@ import 'package:uandme/category_tile.dart';
 ///
 /// While it is named CategoryRoute, a more apt name would be CategoryScreen,
 /// because it is responsible for the UI at the route's destination.
-final _color = Colors.green[100];
 
 class CategoryRoute extends StatefulWidget {
   const CategoryRoute();
@@ -38,82 +35,7 @@ class _CategoryRouteState extends State<CategoryRoute> {
   final _categories = <Category>[];
   Category? _selectedCategory;
   late Category _defaultCategory;
-
-  static const _categoryNames = <String>[
-    'Length',
-    'Area',
-    'Volume',
-    'Mass',
-    'Time',
-    'Digital Storage',
-    'Energy',
-    'Currency',
-  ];
-
-  static const _baseColors = <ColorSwatch>[
-    ColorSwatch(0xFF6AB7A8, {
-      'highlight': Color(0xFF6AB7A8),
-      'splash': Color(0xFF0ABC9B),
-    }),
-    ColorSwatch(0xFFFFD28E, {
-      'highlight': Color(0xFFFFD28E),
-      'splash': Color(0xFFFFA41C),
-    }),
-    ColorSwatch(0xFFFFB7DE, {
-      'highlight': Color(0xFFFFB7DE),
-      'splash': Color(0xFFF94CBF),
-    }),
-    ColorSwatch(0xFF8899A8, {
-      'highlight': Color(0xFF8899A8),
-      'splash': Color(0xFFA9CAE8),
-    }),
-    ColorSwatch(0xFFEAD37E, {
-      'highlight': Color(0xFFEAD37E),
-      'splash': Color(0xFFFFE070),
-    }),
-    ColorSwatch(0xFF81A56F, {
-      'highlight': Color(0xFF81A56F),
-      'splash': Color(0xFF7CC159),
-    }),
-    ColorSwatch(0xFFD7C0E2, {
-      'highlight': Color(0xFFD7C0E2),
-      'splash': Color(0xFFCA90E5),
-    }),
-    ColorSwatch(0xFFCE9A9A, {
-      'highlight': Color(0xFFCE9A9A),
-      'splash': Color(0xFFF94D56),
-      'error': Color(0xFF912D2D),
-    }),
-  ];
-
-  static const _icons = <String>[
-    'assets/icons/length.png',
-    'assets/icons/area.png',
-    'assets/icons/volume.png',
-    'assets/icons/mass.png',
-    'assets/icons/time.png',
-    'assets/icons/digital_storage.png',
-    'assets/icons/power.png',
-    'assets/icons/currency.png',
-  ];
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   for (var i = 0; i < _categoryNames.length; i++) {
-  //     var category = Category(
-  //       name: _categoryNames[i],
-  //       color: _baseColors[i],
-  //       icon: Icons.cake,
-  //       units: _retrieveUnitList(_categoryNames[i]),
-  //     );
-  //     if (i == 0) {
-  //       _defaultCategory = category;
-  //     } else {
-  //       _categories.add(category);
-  //     }
-  //   }
-  // }
+  String _appBarTitle = "Select a Category";
 
   @override
   Future<void> didChangeDependencies() async {
@@ -139,13 +61,13 @@ class _CategoryRouteState extends State<CategoryRoute> {
     var categoryIndex = 0;
     data.keys.forEach((key) {
       final List<Unit> units =
-          data[key].map<Unit>((dynamic data) => Unit.fromJson(data)).toList();
+      data[key].map<Unit>((dynamic data) => Unit.fromJson(data)).toList();
 
       var category = Category(
         name: key,
         units: units,
-        color: _baseColors[categoryIndex],
-        iconLocation: _icons[categoryIndex],
+        color: baseColors[categoryIndex],
+        iconLocation: icons[categoryIndex],
       );
       setState(() {
         if (categoryIndex == 0) {
@@ -164,8 +86,8 @@ class _CategoryRouteState extends State<CategoryRoute> {
       _categories.add(Category(
         name: categoryName,
         units: [],
-        color: _baseColors.last,
-        iconLocation: _icons.last,
+        color: baseColors.last,
+        iconLocation: icons.last,
       ));
     });
     var units = await ApiClient().getCategoryUnits(categoryName);
@@ -178,29 +100,19 @@ class _CategoryRouteState extends State<CategoryRoute> {
       var category = Category(
         name: categoryName,
         units: units,
-        color: _baseColors[_categories.length],
-        iconLocation: _icons[_categories.length],
+        color: baseColors[_categories.length],
+        iconLocation: icons[_categories.length],
       );
       _categories.add(category);
     });
   }
 
-  /// Returns a list of mock [Unit]s.
-  List<Unit> _retrieveUnitList(String categoryName) {
-    return List.generate(10, (int i) {
-      i += 1;
-      return Unit(
-        name: '$categoryName Unit $i',
-        conversion: i.toDouble(),
-      );
-    });
-  }
-
-  // TODO: Fill out this function
   /// Function to call when a [Category] is tapped.
-  void _onCategoryTap(Category category) {
+  _onCategoryTap(Category category, BuildContext context) {
     setState(() {
       _selectedCategory = category;
+      Backdrop.of(context).fling();
+      _appBarTitle = "Unit Converter for " + category.name;
     });
   }
 
@@ -216,38 +128,54 @@ class _CategoryRouteState extends State<CategoryRoute> {
       );
     }
 
-    // final listView = Container(
-    //   color: _color,
-    //   child: ListView.builder(
-    //     itemBuilder: (BuildContext context, int index) {
-    //       return CategoryTile(
-    //           category: _categories[index], onTap: _onCategoryTap);
-    //     },
-    //     itemCount: _categories.length,
-    //   ),
-    //   padding: EdgeInsets.symmetric(horizontal: 10.0),
-    // );
+    final Category currentCategory = _selectedCategory == null
+        ? _defaultCategory
+        : _selectedCategory!;
     final paddingSide = 8.0;
-    final listView = Padding(
-      padding: EdgeInsets.only(
-        left: paddingSide,
-        right: paddingSide,
-        bottom: 48.0,
+    final listView = Container(
+      color: currentCategory.color,
+      child: Padding(
+        padding: EdgeInsets.only(
+          left: paddingSide,
+          right: paddingSide,
+          bottom: 48.0,
+        ),
+        child: _buildCategoryWidgets(MediaQuery
+            .of(context)
+            .orientation),
       ),
-      child: _buildCategoryWidgets(MediaQuery.of(context).orientation),
     );
 
-    final backDrop = Backdrop(
-        currentCategory:
-            _selectedCategory == null ? _defaultCategory! : _selectedCategory!,
-        frontPanel: _selectedCategory == null
-            ? UnitConverter(category: _defaultCategory)
-            : UnitConverter(category: _selectedCategory!),
-        backPanel: listView,
-        frontTitle: Text("Unit Converter"),
-        backTitle: Text("Select a Category"));
+    // using backdrop from library
+    final backDrop = BackdropScaffold(
+      appBar: BackdropAppBar(
+        backgroundColor: currentCategory.color,
+        // title: Text(_getAppBarTitle(context)),
+        title: Text(_appBarTitle),
+        actions: <Widget>[
+          BackdropToggleButton(
+            icon: AnimatedIcons.list_view,
+          )
+        ],
+      ),
+      backLayer: listView,
+      frontLayer: _selectedCategory == null
+          ? UnitConverter(category: _defaultCategory)
+          : UnitConverter(category: _selectedCategory!),
+      subHeader: Padding(
+        padding: EdgeInsets.all(10.0),
+        child: Text(currentCategory.name),
+      ),
+      onBackLayerRevealed: () => _setAppBarTitle(),
+    );
 
     return backDrop;
+  }
+
+  void _setAppBarTitle() {
+    setState(() {
+      _appBarTitle = "Select a Category";
+    });
   }
 
   Widget _buildCategoryWidgets(Orientation deviceOrientation) {

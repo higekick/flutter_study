@@ -15,10 +15,12 @@ import 'unit_converter.dart';
 const _rowHeight = 100.0;
 final _borderRadius = BorderRadius.circular(_rowHeight / 2);
 
+typedef ValueChanged2<T,U> = void Function(T value, U value2);
+
 /// A [CategoryTile] to display a [Category].
 class CategoryTile extends StatelessWidget {
   final Category category;
-  final ValueChanged<Category> onTap;
+  final ValueChanged2<Category, BuildContext> onTap;
 
   /// The [CategoryTile] shows the name and color of a [Category] for unit
   /// conversions.
@@ -50,7 +52,7 @@ class CategoryTile extends StatelessWidget {
           // We can use either the () => function() or the () { function(); }
           // syntax.
           // TODO: This should call the onTap() passed into the constructor
-          onTap: () => onTap(category),
+          onTap: () => onTap(category, context),
           child: Padding(
             padding: EdgeInsets.all(8.0),
             child: Row(
