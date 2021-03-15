@@ -30,12 +30,10 @@ class CategoryRoute extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
-    final notifier = watch(categoriesProvider);
-    // context.read(categoriesProvider).retrieveCategories();
-    notifier.retrieveCategories();
-    Category? currentCategory = notifier.selectedCategory;
+    final state = watch(categoriesProvider.state);
+    Category? currentCategory = state.selectedCategory;
 
-    if (notifier.categories.isEmpty || currentCategory == null) {
+    if (state.categories.isEmpty || currentCategory == null) {
       // return Center(
       //   child: Container(
       //     height: 180.0,
@@ -57,7 +55,7 @@ class CategoryRoute extends ConsumerWidget {
           bottom: 48.0,
         ),
         child:
-            _buildCategoryWidgets(MediaQuery.of(context).orientation, notifier),
+            _buildCategoryWidgets(MediaQuery.of(context).orientation, state),
       ),
     );
 
@@ -66,7 +64,7 @@ class CategoryRoute extends ConsumerWidget {
       appBar: BackdropAppBar(
         backgroundColor: color,
         // title: Text(_getAppBarTitle(context)),
-        title: Text(notifier.appBarTitle),
+        title: Text(state.appBarTitle),
         actions: <Widget>[
           BackdropToggleButton(
             icon: AnimatedIcons.list_view,
@@ -82,19 +80,20 @@ class CategoryRoute extends ConsumerWidget {
         child:
             Text(currentCategory == null ? "loading.." : currentCategory.name),
       ),
-      onBackLayerRevealed: () => _setAppBarTitle(notifier, "Select a Category"),
+      onBackLayerRevealed: () => _setAppBarTitle(state, "Select a Category"),
     );
 
     return backDrop;
   }
 
   Widget _buildCategoryWidgets(
-      Orientation deviceOrientation, CategoriesNotifier notifier) {
-    var _categories = notifier.categories;
+      Orientation deviceOrientation, CategoryState state) {
+    var _categories = state.categories;
     if (deviceOrientation == Orientation.portrait) {
       return ListView.builder(
         itemBuilder: (BuildContext context, int index) {
           return CategoryTile(
+            category: _categories[index],
             onTap: _onCategoryTap,
           );
         },
@@ -106,6 +105,7 @@ class CategoryRoute extends ConsumerWidget {
         childAspectRatio: 3.0,
         children: _categories.map((Category c) {
           return CategoryTile(
+            category: c,
             onTap: _onCategoryTap,
           );
         }).toList(),
@@ -113,8 +113,8 @@ class CategoryRoute extends ConsumerWidget {
     }
   }
 
-  void _setAppBarTitle(CategoriesNotifier notifier, String title) {
-    notifier.setAppBarTitle(title);
+  void _setAppBarTitle(CategoryState state, String title) {
+    state.appBarTitle = title;
   }
 
   void _onCategoryTap(Category category, BuildContext context) async {

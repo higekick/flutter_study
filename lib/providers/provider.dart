@@ -1,4 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uandme/providers/CategoriesNotifier.dart';
 
-final categoriesProvider = Provider((ref) => CategoriesNotifier());
+final categoriesProvider = StateNotifierProvider((ref) => CategoriesNotifier());

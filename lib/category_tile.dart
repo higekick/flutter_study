@@ -21,7 +21,7 @@ typedef ValueChanged2<T, U> = void Function(T value, U value2);
 
 /// A [CategoryTile] to display a [Category].
 class CategoryTile extends ConsumerWidget {
-  // final Category category;
+  final Category category;
   final ValueChanged2<Category, BuildContext> onTap;
 
   /// The [CategoryTile] shows the name and color of a [Category] for unit
@@ -30,7 +30,7 @@ class CategoryTile extends ConsumerWidget {
   /// Tapping on it brings you to the unit converter.
   const CategoryTile({
     Key? key,
-    // required this.category,
+    required this.category,
     required this.onTap,
   });
 
@@ -43,8 +43,6 @@ class CategoryTile extends ConsumerWidget {
   // Theme ancestor in the tree. Below, we obtain the display1 text theme.
   // See https://docs.flutter.io/flutter/material/Theme-class.html
   Widget build(BuildContext context, ScopedReader watch) {
-    final notifier = watch(categoriesProvider);
-    Category? category = notifier.selectedCategory;
     return Material(
       color: Colors.transparent,
       child: category == null
