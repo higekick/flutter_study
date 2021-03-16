@@ -7,6 +7,12 @@ import 'package:uandme/category.dart';
 import 'package:uandme/constants.dart';
 import 'package:uandme/unit.dart';
 
+class CategoryState {
+  List<Category> categories = <Category>[];
+  Category? selectedCategory;
+  String appBarTitle = "Select a Category";
+}
+
 class CategoriesNotifier extends StateNotifier<CategoryState> {
 
   CategoriesNotifier() : super(CategoryState()) {
@@ -91,14 +97,8 @@ class CategoriesNotifier extends StateNotifier<CategoryState> {
     print("debug: retrieveApiCategories finish.");
   }
 
-  Future<void> selectCategory(Category category) async {
+  void selectCategory(Category category) {
     state.selectedCategory = category;
     state.appBarTitle = category.name;
   }
-}
-
-class CategoryState {
-  List<Category> categories = <Category>[];
-  Category? selectedCategory;
-  String appBarTitle = "Select a Category";
 }

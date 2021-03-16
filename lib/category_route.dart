@@ -25,42 +25,15 @@ import 'package:uandme/category_tile.dart';
 const paddingSide = 8.0;
 
 class CategoryRoute extends ConsumerWidget {
-  CategoryRoute(BuildContext context) {
-  }
-
   @override
   Widget build(BuildContext context, ScopedReader watch) {
     final state = watch(categoriesProvider.state);
     Category? currentCategory = state.selectedCategory;
-
-    if (state.categories.isEmpty || currentCategory == null) {
-      // return Center(
-      //   child: Container(
-      //     height: 180.0,
-      //     width: 180.0,
-      //     child: CircularProgressIndicator(),
-      //   ),
-      // );
-    }
-
+    context.read(unitProvider).setCategory(currentCategory);
     var color =
         currentCategory == null ? Colors.blueGrey : currentCategory.color;
 
-    final listView = Container(
-      color: color,
-      child: Padding(
-        padding: EdgeInsets.only(
-          left: paddingSide,
-          right: paddingSide,
-          bottom: 48.0,
-        ),
-        child:
-            _buildCategoryWidgets(MediaQuery.of(context).orientation, state),
-      ),
-    );
-
-    // using backdrop from library
-    final backDrop = BackdropScaffold(
+    return BackdropScaffold(
       appBar: BackdropAppBar(
         backgroundColor: color,
         // title: Text(_getAppBarTitle(context)),
@@ -71,19 +44,29 @@ class CategoryRoute extends ConsumerWidget {
           )
         ],
       ),
-      backLayer: listView,
+      backLayer: Container(
+        // listview
+        color: color,
+        child: Padding(
+          padding: EdgeInsets.only(
+            left: paddingSide,
+            right: paddingSide,
+            bottom: 48.0,
+          ),
+          child:
+              _buildCategoryWidgets(MediaQuery.of(context).orientation, state),
+        ),
+      ),
       frontLayer: currentCategory == null
           ? Center(child: Text("loading..."))
-          : UnitConverter(category: currentCategory),
+          : UnitConverter(),
       subHeader: Padding(
-        padding: EdgeInsets.all(10.0),
-        child:
-            Text(currentCategory == null ? "loading.." : currentCategory.name),
-      ),
+          padding: EdgeInsets.all(10.0),
+          child: Text(state.selectedCategory == null
+              ? "loading.."
+              : state.selectedCategory?.name ?? "")),
       onBackLayerRevealed: () => _setAppBarTitle(state, "Select a Category"),
     );
-
-    return backDrop;
   }
 
   Widget _buildCategoryWidgets(
@@ -117,8 +100,21 @@ class CategoryRoute extends ConsumerWidget {
     state.appBarTitle = title;
   }
 
-  void _onCategoryTap(Category category, BuildContext context) async {
-    await context.read(categoriesProvider).selectCategory(category);
+  void _onCategoryTap(Category category, BuildContext context) {
     Backdrop.of(context).fling();
+    context.read(categoriesProvider).selectCategory(category);
+    context.read(unitProvider).setCategory(category);
+  }
+}
+
+class SubHeader extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, watch) {
+    final state = watch(categoriesProvider.state);
+    return Padding(
+        padding: EdgeInsets.all(10.0),
+        child: Text(state.selectedCategory == null
+            ? "loading.."
+            : state.selectedCategory?.name ?? ""));
   }
 }

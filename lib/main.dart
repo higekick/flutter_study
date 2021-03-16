@@ -34,7 +34,7 @@ class UnitConverterApp extends StatelessWidget {
           primaryColor: Colors.grey[500],
           textSelectionTheme:
               TextSelectionThemeData(selectionHandleColor: Colors.green[500])),
-      home: CategoryRoute(context),
+      home: CategoryRoute(),
     );
   }
 }
