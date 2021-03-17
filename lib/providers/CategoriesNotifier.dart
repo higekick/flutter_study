@@ -5,17 +5,30 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uandme/api_client.dart';
 import 'package:uandme/category.dart';
 import 'package:uandme/constants.dart';
+import 'package:uandme/providers/UnitConverterNotifier.dart';
 import 'package:uandme/unit.dart';
 
 class CategoryState {
-  List<Category> categories = <Category>[];
   Category? selectedCategory;
-  String appBarTitle = "Select a Category";
+  String? appBarTitle = "Select a Category";
+  List<Category>? categories = <Category>[];
+
+  CategoryState({this.selectedCategory, this.appBarTitle, this.categories});
+
+  CategoryState copyWith({selectedCategory, appBarTitle, categories}) {
+    return CategoryState(
+        selectedCategory: selectedCategory ?? this.selectedCategory,
+        appBarTitle: appBarTitle ?? this.appBarTitle,
+        categories: this.categories);
+  }
 }
 
 class CategoriesNotifier extends StateNotifier<CategoryState> {
+  late final UnitConverterNotifier otherNotifier;
 
-  CategoriesNotifier() : super(CategoryState()) {
+  CategoriesNotifier(UnitConverterNotifier notifier)
+      : super(CategoryState()) {
+    this.otherNotifier = notifier;
     print("debug: CategoriesNotifier start.");
     retrieveCategories();
     print("debug: CategoriesNotifier finish.");
@@ -23,18 +36,17 @@ class CategoriesNotifier extends StateNotifier<CategoryState> {
 
   void retrieveCategories() async {
     CategoryState newState = CategoryState();
-    if (state.categories.isEmpty) {
+    if (state.categories?.isEmpty ?? true) {
       print("debug: retrieveCategories start.");
       List<Category> _categories = <Category>[];
       List<Category> catsLocal = await _retrieveLocalCategories();
       _categories.addAll(catsLocal);
       List<Category> catsApi = await _retrieveApiCategories();
       _categories.addAll(catsApi);
-      _categories.forEach((e) => {
-        print(e.name)
-      });
+      _categories.forEach((e) => {print(e.name)});
       newState.categories = _categories;
       newState.selectedCategory = _categories.first;
+      otherNotifier.setCategory(_categories.first);
       state = newState;
       print("debug: retrieveCategories finish.");
     }
@@ -44,7 +56,8 @@ class CategoriesNotifier extends StateNotifier<CategoryState> {
     print("debug: retrieveLocalCategories start.");
     // Consider omitting the types for local variables. For more details on Effective
     // Dart Usage, see https://www.dartlang.org/guides/language/effective-dart/usage
-    final json = PlatformAssetBundle().loadString('assets/data/regular_units.json');
+    final json =
+        PlatformAssetBundle().loadString('assets/data/regular_units.json');
     final data = JsonDecoder().convert(await json);
     if (data is! Map) {
       throw ('Data retrieved from API is not a Map');
@@ -93,12 +106,12 @@ class CategoriesNotifier extends StateNotifier<CategoryState> {
       iconLocation: icons[_categories.length],
     );
     _categories.add(category);
-    return _categories;
     print("debug: retrieveApiCategories finish.");
+    return _categories;
   }
 
   void selectCategory(Category category) {
-    state.selectedCategory = category;
-    state.appBarTitle = category.name;
+    String appBarTitle = category.name;
+    state = state.copyWith(selectedCategory: category, appBarTitle: appBarTitle);
   }
 }

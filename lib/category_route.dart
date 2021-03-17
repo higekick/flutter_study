@@ -26,47 +26,45 @@ const paddingSide = 8.0;
 
 class CategoryRoute extends ConsumerWidget {
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
+  Widget build(BuildContext context, watch) {
     final state = watch(categoriesProvider.state);
-    Category? currentCategory = state.selectedCategory;
-    context.read(unitProvider).setCategory(currentCategory);
-    var color =
-        currentCategory == null ? Colors.blueGrey : currentCategory.color;
+    var color = state.selectedCategory == null
+        ? Colors.blueGrey
+        : state.selectedCategory!.color;
+    if (state.categories == null) {
+      return Text("loading...");
+    }
 
     return BackdropScaffold(
-      appBar: BackdropAppBar(
-        backgroundColor: color,
-        // title: Text(_getAppBarTitle(context)),
-        title: Text(state.appBarTitle),
-        actions: <Widget>[
-          BackdropToggleButton(
-            icon: AnimatedIcons.list_view,
-          )
-        ],
-      ),
-      backLayer: Container(
-        // listview
-        color: color,
-        child: Padding(
-          padding: EdgeInsets.only(
-            left: paddingSide,
-            right: paddingSide,
-            bottom: 48.0,
-          ),
-          child:
-              _buildCategoryWidgets(MediaQuery.of(context).orientation, state),
+        appBar: BackdropAppBar(
+          backgroundColor: color,
+          title: Text(state.appBarTitle ?? "Unit Converter"),
+          actions: <Widget>[
+            BackdropToggleButton(
+              icon: AnimatedIcons.list_view,
+            )
+          ],
         ),
-      ),
-      frontLayer: currentCategory == null
-          ? Center(child: Text("loading..."))
-          : UnitConverter(),
-      subHeader: Padding(
-          padding: EdgeInsets.all(10.0),
-          child: Text(state.selectedCategory == null
-              ? "loading.."
-              : state.selectedCategory?.name ?? "")),
-      onBackLayerRevealed: () => _setAppBarTitle(state, "Select a Category"),
-    );
+        backLayer: Container(
+            // listview
+            color: color,
+            child: Padding(
+                padding: EdgeInsets.only(
+                  left: paddingSide,
+                  right: paddingSide,
+                  bottom: 48.0,
+                ),
+                child: _buildCategoryWidgets(
+                    MediaQuery.of(context).orientation, state))),
+        frontLayer: UnitConverter(),
+        subHeader: Padding(
+            padding: EdgeInsets.all(10.0),
+            child: Padding(
+                padding: EdgeInsets.all(10.0),
+                child: Text(state.selectedCategory == null
+                    ? "loading.."
+                    : state.selectedCategory?.name ?? "")))
+        );
   }
 
   Widget _buildCategoryWidgets(
@@ -76,17 +74,17 @@ class CategoryRoute extends ConsumerWidget {
       return ListView.builder(
         itemBuilder: (BuildContext context, int index) {
           return CategoryTile(
-            category: _categories[index],
+            category: _categories!.elementAt(index),
             onTap: _onCategoryTap,
           );
         },
-        itemCount: _categories.length,
+        itemCount: _categories?.length,
       );
     } else {
       return GridView.count(
         crossAxisCount: 3,
         childAspectRatio: 3.0,
-        children: _categories.map((Category c) {
+        children: _categories!.map((Category c) {
           return CategoryTile(
             category: c,
             onTap: _onCategoryTap,
@@ -96,25 +94,9 @@ class CategoryRoute extends ConsumerWidget {
     }
   }
 
-  void _setAppBarTitle(CategoryState state, String title) {
-    state.appBarTitle = title;
-  }
-
   void _onCategoryTap(Category category, BuildContext context) {
-    Backdrop.of(context).fling();
     context.read(categoriesProvider).selectCategory(category);
     context.read(unitProvider).setCategory(category);
-  }
-}
-
-class SubHeader extends ConsumerWidget {
-  @override
-  Widget build(BuildContext context, watch) {
-    final state = watch(categoriesProvider.state);
-    return Padding(
-        padding: EdgeInsets.all(10.0),
-        child: Text(state.selectedCategory == null
-            ? "loading.."
-            : state.selectedCategory?.name ?? ""));
+    Backdrop.of(context).fling();
   }
 }
