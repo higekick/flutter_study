@@ -2,53 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:uandme/entity/category.dart';
 import 'package:uandme/entity/unit.dart';
 
-class UnitConverterState {
-  Category? selectedCategory;
-  Unit? selectedIn;
-  Unit? selectedOut;
-  double? inputValue;
-  String? outputValue = '';
-  List<DropdownMenuItem<Unit>>? unitMenuItems = [];
-  bool? showApiError = false;
-  bool? showValidationError = false;
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  UnitConverterState({
-    selectedCategory,
-    selectedIn,
-    selectedOut,
-    inputValue,
-    outputValue,
-    unitMenuItems,
-    showApiError,
-    showValidationError,
-  }) {
-    this.selectedCategory = selectedCategory;
-    this.selectedIn = selectedIn;
-    this.selectedOut = selectedOut;
-    this.inputValue = inputValue;
-    this.outputValue = outputValue;
-    this.unitMenuItems = unitMenuItems;
-    this.showApiError = showApiError;
-    this.showValidationError = showValidationError;
-  }
+part 'state_unit_converter.freezed.dart';
+part 'state_unit_converter.g.dart';
 
-  UnitConverterState copyWith(
-      {selectedCategory,
-        selectedIn,
-        selectedOut,
-        inputValue,
-        outputValue,
-        unitMenuItems,
-        showApiError,
-        showValidationError}) {
-    return UnitConverterState(
-        selectedCategory: selectedCategory ?? this.selectedCategory,
-        selectedIn: selectedIn ?? this.selectedIn,
-        selectedOut: selectedOut ?? this.selectedOut,
-        inputValue: inputValue ?? this.inputValue,
-        outputValue: outputValue ?? this.outputValue,
-        unitMenuItems: unitMenuItems ?? this.unitMenuItems,
-        showApiError: showApiError ?? this.showApiError,
-        showValidationError: showValidationError ?? this.showValidationError);
-  }
+@freezed
+class StateUnitConverter with _$StateUnitConverter {
+  const factory StateUnitConverter({
+  Category? selectedCategory,
+  Unit? selectedIn,
+  Unit? selectedOut,
+  @Default(0.0) double? inputValue,
+  @Default('') String outputValue,
+  @Default([]) @JsonKey(ignore: true) List<DropdownMenuItem<Unit>>? unitMenuItems,
+  @Default(false) bool showApiError,
+  @Default(false) bool showValidationError,
+  }) = _StateUnitConverter;
+
+  factory StateUnitConverter.fromJson(Map<String, dynamic> json) => _$StateUnitConverterFromJson(json);
 }

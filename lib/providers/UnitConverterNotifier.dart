@@ -5,10 +5,10 @@ import 'package:uandme/entity/state_unit_converter.dart';
 import 'package:uandme/entity/category.dart';
 import 'package:uandme/entity/unit.dart';
 
-class UnitConverterNotifier extends StateNotifier<UnitConverterState> {
+class UnitConverterNotifier extends StateNotifier<StateUnitConverter> {
   final textController = TextEditingController();
 
-  UnitConverterNotifier() : super(UnitConverterState()) {
+  UnitConverterNotifier() : super(StateUnitConverter()) {
     print("debug: UnitConverterNotifier start.");
     // initState();
     print("debug: UnitConvertersNotifier finish.");
@@ -37,12 +37,13 @@ class UnitConverterNotifier extends StateNotifier<UnitConverterState> {
     }
     textController.clear();
     state = state.copyWith(
-        selectedCategory: selCategory,
-        selectedIn: selIn,
-        selectedOut: selOut,
-        showApiError: false,
-        unitMenuItems: items,
-        outputValue: ""
+      selectedCategory: selCategory,
+      selectedIn: selIn,
+      selectedOut: selOut,
+      showApiError: false,
+      unitMenuItems: items,
+      inputValue: null,
+      outputValue: "",
     );
     print("setDefault: end: ${state.selectedCategory?.name}");
   }
