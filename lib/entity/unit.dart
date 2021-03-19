@@ -2,23 +2,17 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// Information about a [Unit].
-class Unit {
-  final String name;
-  final double conversion;
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  /// A [Unit] stores its name and conversion factor.
-  ///
-  /// An example would be 'Meter' and '1.0'.
-  const Unit({
-    required this.name,
-    required this.conversion,
-  });
+part 'unit.freezed.dart';
+part 'unit.g.dart';
 
-  /// Creates a [Unit] from a JSON object.
-  Unit.fromJson(Map jsonMap)
-      : assert(jsonMap['name'] != null),
-        assert(jsonMap['conversion'] != null),
-        name = jsonMap['name'],
-        conversion = jsonMap['conversion'].toDouble();
+@freezed
+abstract class Unit with _$Unit {
+  const factory Unit({
+    @Default('') String name,
+    @Default(0.0) double conversion
+  }) = _Unit;
+
+  factory Unit.fromJson(Map<String, dynamic> json) => _$UnitFromJson(json);
 }

@@ -31,6 +31,7 @@ class DropDownUnit extends StatelessWidget {
               child: DropdownButton<Unit>(
                   value: _selected,
                   onChanged: (Unit? newValue) {
+                    print("Unit:${newValue?.toString() ?? ''}");
                     _callback(newValue!);
                   },
                   style: Theme.of(context).textTheme.subtitle1,
