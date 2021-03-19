@@ -66,40 +66,41 @@ class UnitConverter extends ConsumerWidget {
 
   }
 
-  Widget makeControl(BuildContext context, String label, GetCallback callback, Unit? selected, UnitConverterState state) {
+  Widget makeControl(BuildContext context, String label, GetCallback callback,
+      Unit? selected, UnitConverterState state) {
     final ctrls = Padding(
       padding: EdgeInsets.all(16.0),
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         label == 'Input'
             ? TextField(
-          style: Theme.of(context).textTheme.headline4,
-          decoration: InputDecoration(
-            labelStyle: Theme.of(context).textTheme.headline4,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(0.0),
-            ),
-            labelText: label,
-          ),
-          onChanged: (value) => {
-            context.read(unitProvider).updateInputValue(value)
-          },
-          keyboardType: TextInputType.number,
-        )
+                controller: context.read(unitProvider).textController,
+                style: Theme.of(context).textTheme.headline4,
+                decoration: InputDecoration(
+                  labelStyle: Theme.of(context).textTheme.headline4,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(0.0),
+                  ),
+                  labelText: label,
+                ),
+                onChanged: (value) =>
+                    {context.read(unitProvider).updateInputValue(value)},
+                keyboardType: TextInputType.number,
+              )
             : InputDecorator(
-          child: Text(
-            state.outputValue ?? "",
-            style: Theme.of(context).textTheme.headline4,
-          ),
-          decoration: InputDecoration(
-            labelText: 'Output',
-            labelStyle: Theme.of(context).textTheme.headline4,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(0.0),
-            ),
-          ),
-        ),
+                child: Text(
+                  state.outputValue ?? "",
+                  style: Theme.of(context).textTheme.headline4,
+                ),
+                decoration: InputDecoration(
+                  labelText: 'Output',
+                  labelStyle: Theme.of(context).textTheme.headline4,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(0.0),
+                  ),
+                ),
+              ),
         Container(
-          // dropdown
+            // dropdown
             margin: EdgeInsets.only(top: 16.0),
             decoration: BoxDecoration(
               // This sets the color of the [DropdownButton] itself
@@ -112,20 +113,19 @@ class UnitConverter extends ConsumerWidget {
             padding: EdgeInsets.symmetric(vertical: 8.0),
             child: DropdownButtonHideUnderline(
                 child: ButtonTheme(
-                  alignedDropdown: true,
-                  child: DropdownButton<Unit>(
-                      value: selected,
-                      onChanged: (Unit? newValue) {
-                          callback(newValue!);
-                      },
-                      style: Theme.of(context).textTheme.subtitle1,
-                      items: state.unitMenuItems),
-                )))
+              alignedDropdown: true,
+              child: DropdownButton<Unit>(
+                  value: selected,
+                  onChanged: (Unit? newValue) {
+                    callback(newValue!);
+                  },
+                  style: Theme.of(context).textTheme.subtitle1,
+                  items: state.unitMenuItems),
+            )))
       ]),
     );
     return ctrls;
   }
-
 }
 
 typedef GetCallback = void Function(Unit);

@@ -43,7 +43,6 @@ class CategoryTile extends ConsumerWidget {
   // Theme ancestor in the tree. Below, we obtain the display1 text theme.
   // See https://docs.flutter.io/flutter/material/Theme-class.html
   Widget build(BuildContext context, ScopedReader watch) {
-    context.read(unitProvider);
     return Material(
       color: Colors.transparent,
       child: category == null

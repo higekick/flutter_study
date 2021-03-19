@@ -56,6 +56,8 @@ class UnitConverterState {
 }
 
 class UnitConverterNotifier extends StateNotifier<UnitConverterState> {
+  final textController = TextEditingController();
+
   UnitConverterNotifier() : super(UnitConverterState()) {
     print("debug: UnitConverterNotifier start.");
     // initState();
@@ -83,12 +85,14 @@ class UnitConverterNotifier extends StateNotifier<UnitConverterState> {
     if (unitSize > 1) {
       selOut = selCategory?.units[1];
     }
+    textController.clear();
     state = state.copyWith(
         selectedCategory: selCategory,
         selectedIn: selIn,
         selectedOut: selOut,
         showApiError: false,
-        unitMenuItems: items
+        unitMenuItems: items,
+        outputValue: ""
     );
     print("setDefault: end: ${state.selectedCategory?.name}");
   }
@@ -114,6 +118,7 @@ class UnitConverterNotifier extends StateNotifier<UnitConverterState> {
   }
 
   Future<void> updateConversion() async {
+    print("UnitCoverter: updateConversion");
     if (state.selectedIn == null ||
         state.selectedOut == null ||
         state.inputValue == null) {
@@ -137,6 +142,7 @@ class UnitConverterNotifier extends StateNotifier<UnitConverterState> {
   }
 
   void updateInputValue(String input) {
+    print("UnitCoverter: updateInputValue");
     if (input.isEmpty) {
       state = state.copyWith(outputValue: '');
     } else {
