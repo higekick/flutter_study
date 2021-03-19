@@ -36,22 +36,5 @@ class UnitConverter extends StatelessWidget {
                   child: converter,
                 ),
               ));
-    // return Padding(
-    //   padding: PADDING_EDGE_ALL,
-    //   child: OrientationBuilder(
-    //     builder: (BuildContext context, Orientation orientation) {
-    //       if (orientation == Orientation.portrait) {
-    //         return converter;
-    //       } else {
-    //         return Center(
-    //           child: Container(
-    //             width: 450.0,
-    //             child: converter,
-    //           ),
-    //         );
-    //       }
-    //     },
-    //   ),
-    // );
   }
 }
