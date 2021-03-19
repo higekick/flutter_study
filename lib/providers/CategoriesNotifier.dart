@@ -4,16 +4,15 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uandme/api_client.dart';
 import 'package:uandme/constants.dart';
-import 'package:uandme/entity/StateCategory.dart';
+import 'package:uandme/entity/state_category.dart';
 import 'package:uandme/entity/category.dart';
 import 'package:uandme/entity/unit.dart';
 import 'package:uandme/providers/UnitConverterNotifier.dart';
 
-class CategoriesNotifier extends StateNotifier<CategoryState> {
+class CategoriesNotifier extends StateNotifier<StateCategory> {
   late final UnitConverterNotifier otherNotifier;
 
-  CategoriesNotifier(UnitConverterNotifier notifier)
-      : super(CategoryState()) {
+  CategoriesNotifier(UnitConverterNotifier notifier) : super(StateCategory()) {
     this.otherNotifier = notifier;
     print("debug: CategoriesNotifier start.");
     retrieveCategories();
@@ -21,8 +20,7 @@ class CategoriesNotifier extends StateNotifier<CategoryState> {
   }
 
   void retrieveCategories() async {
-    CategoryState newState = CategoryState();
-    if (state.categories?.isEmpty ?? true) {
+    if (state.categories.isEmpty) {
       print("debug: retrieveCategories start.");
       List<Category> _categories = <Category>[];
       List<Category> catsLocal = await _retrieveLocalCategories();
@@ -30,10 +28,9 @@ class CategoriesNotifier extends StateNotifier<CategoryState> {
       List<Category> catsApi = await _retrieveApiCategories();
       _categories.addAll(catsApi);
       _categories.forEach((e) => {print(e.name)});
-      newState.categories = _categories;
-      newState.selectedCategory = _categories.first;
+      state = state.copyWith(
+          selectedCategory: _categories.first, categories: _categories);
       otherNotifier.setCategory(_categories.first);
-      state = newState;
       print("debug: retrieveCategories finish.");
     }
   }
@@ -99,6 +96,7 @@ class CategoriesNotifier extends StateNotifier<CategoryState> {
   void selectCategory(Category category) {
     print("Category:" + category.toString());
     String appBarTitle = category.name;
-    state = state.copyWith(selectedCategory: category, appBarTitle: appBarTitle);
+    state =
+        state.copyWith(selectedCategory: category, appBarTitle: appBarTitle);
   }
 }

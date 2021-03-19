@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uandme/api_client.dart';
-import 'package:uandme/entity/StateUnitConverter.dart';
+import 'package:uandme/entity/state_unit_converter.dart';
 import 'package:uandme/entity/category.dart';
 import 'package:uandme/entity/unit.dart';
 
