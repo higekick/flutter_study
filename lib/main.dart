@@ -2,17 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// You can read about packages here: https://flutter.io/using-packages/
 import 'package:flutter/material.dart';
-import 'package:uandme/category_route.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:uandme/screen/category_screen.dart';
 
-// You can use a relative import, i.e. `import 'category.dart';` or
-// a package import, as shown below.
-// More details at http://dart-lang.github.io/linter/lints/avoid_relative_lib_imports.html
-
-/// The function that is called when main.dart is run.
 void main() {
-  runApp(UnitConverterApp());
+  runApp(ProviderScope(child: UnitConverterApp()));
 }
 
 /// This widget is the root of our application.
@@ -33,7 +28,7 @@ class UnitConverterApp extends StatelessWidget {
           primaryColor: Colors.grey[500],
           textSelectionTheme:
               TextSelectionThemeData(selectionHandleColor: Colors.green[500])),
-      home: CategoryRoute(),
+      home: CategoryScreen(),
     );
   }
 }

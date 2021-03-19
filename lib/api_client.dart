@@ -1,8 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/material.dart';
-import 'package:uandme/unit.dart';
+import 'package:uandme/entity/unit.dart';
 
 class ApiClient {
   final _httpClient = HttpClient();
