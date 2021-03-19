@@ -4,15 +4,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uandme/constants.dart';
 import 'package:uandme/providers/provider.dart';
 
+// ignore: must_be_immutable
 class MyAppBar extends ConsumerWidget implements PreferredSizeWidget {
-  Size appBarSize = Size(200,100);
+  BackdropAppBar? appBar;
+
   @override
   Widget build(BuildContext context, watch) {
     final state = watch(categoriesProvider.state);
     final Color color = state.selectedCategory?.color ?? COLOR_DEFAULT;
     final String title = state.selectedCategory?.name ?? "Unit Converter";
 
-    final appBar = BackdropAppBar(
+    this.appBar = BackdropAppBar(
       backgroundColor: color,
       title: Text(title),
       actions: <Widget>[
@@ -21,10 +23,9 @@ class MyAppBar extends ConsumerWidget implements PreferredSizeWidget {
         )
       ],
     );
-    appBarSize = appBar.preferredSize;
-    return appBar;
+    return appBar!;
   }
 
   @override
-  Size get preferredSize => this.appBarSize!;
+  Size get preferredSize => this.appBar?.preferredSize ?? Size(500, 100);
 }
