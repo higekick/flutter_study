@@ -15,7 +15,7 @@ class OutputUnit extends ConsumerWidget {
             Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           OutputField(state.outputValue),
           DropDownUnit((val) {
-            context.read(unitProvider).setIn(val);
+            context.read(unitProvider).setOut(val);
           }, state.selectedOut, state.unitMenuItems)
         ]));
   }

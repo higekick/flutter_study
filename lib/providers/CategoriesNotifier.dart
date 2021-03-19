@@ -97,6 +97,7 @@ class CategoriesNotifier extends StateNotifier<CategoryState> {
   }
 
   void selectCategory(Category category) {
+    print("Category:" + category.toString());
     String appBarTitle = category.name;
     state = state.copyWith(selectedCategory: category, appBarTitle: appBarTitle);
   }

@@ -8,7 +8,7 @@ part 'unit.freezed.dart';
 part 'unit.g.dart';
 
 @freezed
-abstract class Unit with _$Unit {
+class Unit with _$Unit {
   const factory Unit({
     @Default('') String name,
     @Default(0.0) double conversion
