@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:uandme/unit.dart';
+import 'package:uandme/constants.dart';
+import 'package:uandme/entity/unit.dart';
 import 'package:uandme/util.dart';
 
 class DropDownUnit extends StatelessWidget {
@@ -21,6 +22,7 @@ class DropDownUnit extends StatelessWidget {
             color: Colors.grey[400]!,
             width: 1.0,
           ),
+          borderRadius: BorderRadius.circular(BORDER_RADIUS),
         ),
         padding: EdgeInsets.symmetric(vertical: 8.0),
         child: DropdownButtonHideUnderline(

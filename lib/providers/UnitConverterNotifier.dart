@@ -1,59 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:uandme/category.dart';
-import 'package:uandme/unit.dart';
 import 'package:uandme/api_client.dart';
-
-class UnitConverterState {
-  Category? selectedCategory;
-  Unit? selectedIn;
-  Unit? selectedOut;
-  double? inputValue;
-  String? outputValue = '';
-  List<DropdownMenuItem<Unit>>? unitMenuItems = [];
-  bool? showApiError = false;
-  bool? showValidationError = false;
-
-  UnitConverterState({
-    selectedCategory,
-    selectedIn,
-    selectedOut,
-    inputValue,
-    outputValue,
-    unitMenuItems,
-    showApiError,
-    showValidationError,
-  }) {
-    this.selectedCategory = selectedCategory;
-    this.selectedIn = selectedIn;
-    this.selectedOut = selectedOut;
-    this.inputValue = inputValue;
-    this.outputValue = outputValue;
-    this.unitMenuItems = unitMenuItems;
-    this.showApiError = showApiError;
-    this.showValidationError = showValidationError;
-  }
-
-  UnitConverterState copyWith(
-      {selectedCategory,
-      selectedIn,
-      selectedOut,
-      inputValue,
-      outputValue,
-      unitMenuItems,
-      showApiError,
-      showValidationError}) {
-    return UnitConverterState(
-        selectedCategory: selectedCategory ?? this.selectedCategory,
-        selectedIn: selectedIn ?? this.selectedIn,
-        selectedOut: selectedOut ?? this.selectedOut,
-        inputValue: inputValue ?? this.inputValue,
-        outputValue: outputValue ?? this.outputValue,
-        unitMenuItems: unitMenuItems ?? this.unitMenuItems,
-        showApiError: showApiError ?? this.showApiError,
-        showValidationError: showValidationError ?? this.showValidationError);
-  }
-}
+import 'package:uandme/entity/StateUnitConverter.dart';
+import 'package:uandme/entity/category.dart';
+import 'package:uandme/entity/unit.dart';
 
 class UnitConverterNotifier extends StateNotifier<UnitConverterState> {
   final textController = TextEditingController();
@@ -99,10 +49,12 @@ class UnitConverterNotifier extends StateNotifier<UnitConverterState> {
 
   void setIn(Unit selected) {
     state = state.copyWith(selectedIn: selected);
+    updateConversion();
   }
 
   void setOut(Unit selected) {
     state = state.copyWith(selectedOut: selected);
+    updateConversion();
   }
 
   List<DropdownMenuItem<Unit>> _createDropdownMenuItems(Category? selCat) {

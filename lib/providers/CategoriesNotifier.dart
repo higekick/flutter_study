@@ -3,25 +3,11 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uandme/api_client.dart';
-import 'package:uandme/category.dart';
 import 'package:uandme/constants.dart';
+import 'package:uandme/entity/StateCategory.dart';
+import 'package:uandme/entity/category.dart';
+import 'package:uandme/entity/unit.dart';
 import 'package:uandme/providers/UnitConverterNotifier.dart';
-import 'package:uandme/unit.dart';
-
-class CategoryState {
-  Category? selectedCategory;
-  String? appBarTitle = "Select a Category";
-  List<Category>? categories = <Category>[];
-
-  CategoryState({this.selectedCategory, this.appBarTitle, this.categories});
-
-  CategoryState copyWith({selectedCategory, appBarTitle, categories}) {
-    return CategoryState(
-        selectedCategory: selectedCategory ?? this.selectedCategory,
-        appBarTitle: appBarTitle ?? this.appBarTitle,
-        categories: this.categories);
-  }
-}
 
 class CategoriesNotifier extends StateNotifier<CategoryState> {
   late final UnitConverterNotifier otherNotifier;

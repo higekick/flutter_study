@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:uandme/constants.dart';
 
 class OutputField extends StatelessWidget {
   final String? _outputValue;
@@ -16,7 +17,7 @@ class OutputField extends StatelessWidget {
         labelText: 'Output',
         labelStyle: Theme.of(context).textTheme.headline4,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(0.0),
+          borderRadius: BorderRadius.circular(BORDER_RADIUS),
         ),
       ),
     );

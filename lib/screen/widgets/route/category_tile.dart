@@ -2,27 +2,17 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// To keep your imports tidy, follow the ordering guidelines at
-// https://www.dartlang.org/guides/language/effective-dart/style#ordering
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:meta/meta.dart';
-import 'package:uandme/providers/provider.dart';
+import 'package:uandme/entity/category.dart';
+import 'package:uandme/util.dart';
 
-import 'category.dart';
-import 'unit_converter.dart';
-
-// We use an underscore to indicate that these variables are private.
-// See https://www.dartlang.org/guides/language/effective-dart/design#libraries
 const _rowHeight = 100.0;
 final _borderRadius = BorderRadius.circular(_rowHeight / 2);
 
-typedef ValueChanged2<T, U> = void Function(T value, U value2);
-
 /// A [CategoryTile] to display a [Category].
-class CategoryTile extends ConsumerWidget {
+class CategoryTile extends StatelessWidget {
   final Category category;
-  final ValueChanged2<Category, BuildContext> onTap;
+  final ValueChanged2<Category, BuildContext, void> onTap;
 
   /// The [CategoryTile] shows the name and color of a [Category] for unit
   /// conversions.
@@ -42,7 +32,7 @@ class CategoryTile extends ConsumerWidget {
   // widget tree. It can be used for obtaining Theme data from the nearest
   // Theme ancestor in the tree. Below, we obtain the display1 text theme.
   // See https://docs.flutter.io/flutter/material/Theme-class.html
-  Widget build(BuildContext context, ScopedReader watch) {
+  Widget build(BuildContext context) {
     return Material(
       color: Colors.transparent,
       child: category == null

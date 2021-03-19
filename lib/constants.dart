@@ -46,3 +46,8 @@ const icons = <String>[
   'assets/icons/power.png',
   'assets/icons/currency.png',
 ];
+
+const BORDER_RADIUS = 10.0;
+const PADDING_EDGE_ALL = EdgeInsets.all(10.0);
+const PADDING_SIDE = 8.0;
+const COLOR_DEFAULT = Colors.blueGrey;

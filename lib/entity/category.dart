@@ -5,12 +5,7 @@
 // To keep your imports tidy, follow the ordering guidelines at
 // https://www.dartlang.org/guides/language/effective-dart/style#ordering
 import 'package:flutter/material.dart';
-import 'package:uandme/unit.dart';
-
-final _rowHeight = 100.0;
-final _borderRadius = BorderRadius.circular(_rowHeight / 10);
-final _iconSize = 60.0;
-final _textSize = 24.0;
+import 'package:uandme/entity/unit.dart';
 
 /// A custom [Category] widget.
 ///

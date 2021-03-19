@@ -4,4 +4,4 @@ import 'package:uandme/providers/UnitConverterNotifier.dart';
 
 final unitProvider = StateNotifierProvider((ref) => UnitConverterNotifier());
 final categoriesProvider = StateNotifierProvider(
-    (ref) => CategoriesNotifier(ref.watch(unitProvider)));
+    (ref) => CategoriesNotifier(ref.read(unitProvider)));
